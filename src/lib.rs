@@ -90,33 +90,12 @@ pub static HIGHLIGHT_NAMES: &[&str] = &[
     "constinit",
 ];
 
-fn get_attrs(highlight_names: &[String]) -> (Vec<String>, Vec<String>) {
-    let html_attrs: Vec<String> = highlight_names
-        .iter()
-        .map(|s| {
-            match s.as_str() {
-                "function" => "hljs-code",
-                "type" => "hljs-type",
-                "variable.builtin" => "hljs-variable",
-                "constant" => "hljs-variable",
-                "keyword" => "hljs-keyword",
-                "string" => "hljs-string",
-                "comment" => "hljs-comment",
-                _ => "hljs-keyword",
-            }
-            .to_owned()
-        })
-        .collect();
 
-    let class_names: Vec<String> = highlight_names
-        .iter()
-        .map(|s| s.replace('.', " "))
-        .collect();
-
-    (html_attrs, class_names)
-}
-
-pub fn highlight_to_html(lang: Language, code: &str) -> String {
+pub fn highlight_to_html(
+    lang: Language,
+    code: &str,
+    class_map: Option<&dyn Fn(&str) -> &str>,
+) -> String {
     let recognized_names: Vec<String> = HIGHLIGHT_NAMES.iter().cloned().map(String::from).collect();
 
     let mut highlighter = Highlighter::new();
@@ -202,8 +181,6 @@ pub fn highlight_to_html(lang: Language, code: &str) -> String {
         .highlight(&config, code.as_bytes(), None, |_| None)
         .unwrap();
 
-    let (html_attrs, class_names) = get_attrs(&recognized_names[..]);
-
     for event in highlights {
         match event.unwrap() {
             HighlightEvent::Source { start, end } => {
@@ -211,9 +188,14 @@ pub fn highlight_to_html(lang: Language, code: &str) -> String {
                 result.push_str(&code_span);
             }
             HighlightEvent::HighlightStart(s) => {
-                let name = HIGHLIGHT_NAMES.get(s.0).unwrap().replace(".", "-");
+                let highlight_name = HIGHLIGHT_NAMES.get(s.0).unwrap();
+                let name = highlight_name.replace(".", "-");
+                let class_name = match class_map {
+                    Some(f) => f(highlight_name),
+                    None => "",
+                };
 
-                result.push_str(&format!("<span class='{} {}'>", name, html_attrs[s.0]));
+                result.push_str(&format!("<span class='{} {}'>", name, class_name));
             }
             HighlightEvent::HighlightEnd => {
                 result.push_str("</span>");
@@ -222,35 +204,4 @@ pub fn highlight_to_html(lang: Language, code: &str) -> String {
     }
 
     result
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let code = r#"
-use tree_sitter::Parser;
-use tree_sitter_highlight::{HighlightConfiguration, HighlightEvent, Highlighter};
-use thiserror::Error;
-
-pub fn hello<T>(c: T) -> T {
-    c
-}
-
-#[derive(Error, Debug)]
-pub enum ResponseError {
-    /// A paypal api error.
-    #[error("api error {0}")]
-    ApiError(#[from] PaypalError),
-    /// A http error.
-    #[error("http error {0}")]
-    HttpError(#[from] reqwest::Error)
-}
-"#;
-
-        let result = highlight_to_html(Language::Rust, code);
-        println!("{}", result);
-    }
 }
