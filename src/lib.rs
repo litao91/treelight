@@ -25,6 +25,8 @@
 //! println!("{}", result);
 //! ```
 
+use std::collections::HashMap;
+
 use tree_sitter_highlight::{HighlightConfiguration, HighlightEvent, Highlighter};
 use v_htmlescape::escape;
 
@@ -85,7 +87,34 @@ pub static HIGHLIGHT_NAMES: &[&str] = &[
     "variable.builtin",
     "variable.parameter",
     "comment",
+    "constinit",
 ];
+
+fn get_attrs(highlight_names: &[String]) -> (Vec<String>, Vec<String>) {
+    let html_attrs: Vec<String> = highlight_names
+        .iter()
+        .map(|s| {
+            match s.as_str() {
+                "function" => "hljs-code",
+                "type" => "hljs-type",
+                "variable.builtin" => "hljs-variable",
+                "constant" => "hljs-variable",
+                "keyword" => "hljs-keyword",
+                "string" => "hljs-string",
+                "comment" => "hljs-comment",
+                _ => "hljs-keyword",
+            }
+            .to_owned()
+        })
+        .collect();
+
+    let class_names: Vec<String> = highlight_names
+        .iter()
+        .map(|s| s.replace('.', " "))
+        .collect();
+
+    (html_attrs, class_names)
+}
 
 pub fn highlight_to_html(lang: Language, code: &str) -> String {
     let recognized_names: Vec<String> = HIGHLIGHT_NAMES.iter().cloned().map(String::from).collect();
@@ -173,6 +202,8 @@ pub fn highlight_to_html(lang: Language, code: &str) -> String {
         .highlight(&config, code.as_bytes(), None, |_| None)
         .unwrap();
 
+    let (html_attrs, class_names) = get_attrs(&recognized_names[..]);
+
     for event in highlights {
         match event.unwrap() {
             HighlightEvent::Source { start, end } => {
@@ -182,7 +213,7 @@ pub fn highlight_to_html(lang: Language, code: &str) -> String {
             HighlightEvent::HighlightStart(s) => {
                 let name = HIGHLIGHT_NAMES.get(s.0).unwrap().replace(".", "-");
 
-                result.push_str(&format!("<span class='{}'>", name));
+                result.push_str(&format!("<span class='{} {}'>", name, html_attrs[s.0]));
             }
             HighlightEvent::HighlightEnd => {
                 result.push_str("</span>");
