@@ -222,14 +222,9 @@ lazy_static::lazy_static! {
     };
 }
 
-pub fn highlight_to_html(
-    lang: Language,
-    code: &str,
-    class_map: Option<&dyn Fn(&str) -> &str>,
-) -> String {
+pub fn highlight_to_html(lang: Language, code: &str, attr_map: &dyn Fn(&str) -> &str) -> String {
     let mut highlighter = Highlighter::new();
     let config = LANGUAGE_CONFIGS.get(&lang).unwrap();
-
 
     let mut result = String::new();
 
@@ -245,13 +240,9 @@ pub fn highlight_to_html(
             }
             HighlightEvent::HighlightStart(s) => {
                 let highlight_name = HIGHLIGHT_NAMES.get(s.0).unwrap();
-                let name = highlight_name.replace(".", "-");
-                let class_name = match class_map {
-                    Some(f) => f(highlight_name),
-                    None => "",
-                };
+                let attr = attr_map(highlight_name);
 
-                result.push_str(&format!("<span class='{} {}'>", name, class_name));
+                result.push_str(&format!("<span {}>", attr));
             }
             HighlightEvent::HighlightEnd => {
                 result.push_str("</span>");
