@@ -43,7 +43,7 @@ pub mod scala;
 pub mod typescript;
 
 /// The list of supported languages
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub enum Language {
     Rust,
     Javascript,
@@ -64,42 +64,83 @@ pub enum Language {
 /// within the class attribute, with the dots replaced by `-`, for example `punctuation.delimiter`
 /// will become `<span class="punctuation-delimiter">code here...</span>`.
 pub static HIGHLIGHT_NAMES: &[&str] = &[
+    "annotation",
     "attribute",
-    "label",
+    "boolean",
+    "character",
+    "character.special",
+    "comment",
+    "conditional",
     "constant",
+    "constant.builtin",
+    "constant.macro",
+    "constructor",
+    "debug",
+    "define",
+    "error",
+    "exception",
+    "field",
+    "float",
+    "function",
     "function.builtin",
     "function.macro",
-    "function",
+    "include",
     "keyword",
+    "keyword.function",
+    "keyword.operator",
+    "keyword.return",
+    "label",
+    "method",
+    "namespace",
+    "none",
+    "number",
     "operator",
+    "parameter",
+    "parameter.reference",
+    "preproc",
     "property",
-    "punctuation",
-    "punctuation.bracket",
     "punctuation.delimiter",
+    "punctuation.bracket",
+    "punctuation.special",
+    "repeat",
+    "storageclass",
     "string",
+    "string.regex",
+    "string.escape",
     "string.special",
+    "symbol",
     "tag",
-    "escape",
+    "tag.attribute",
+    "tag.delimiter",
+    "text",
+    "text.strong",
+    "text.emphasis",
+    "text.underline",
+    "text.strike",
+    "text.title",
+    "text.literal",
+    "text.uri",
+    "text.math",
+    "text.reference",
+    "text.environment",
+    "text.environment.name",
+    "text.note",
+    "text.warning",
+    "text.danger",
+    "todo",
     "type",
     "type.builtin",
-    "constructor",
+    "type.qualifier",
+    "type.definition",
     "variable",
     "variable.builtin",
-    "variable.parameter",
-    "comment",
-    "constinit",
 ];
 
-
-pub fn highlight_to_html(
-    lang: Language,
-    code: &str,
-    class_map: Option<&dyn Fn(&str) -> &str>,
-) -> String {
-    let recognized_names: Vec<String> = HIGHLIGHT_NAMES.iter().cloned().map(String::from).collect();
-
-    let mut highlighter = Highlighter::new();
-
+lazy_static::lazy_static! {
+    static ref LANGUAGE_CONFIGS: HashMap<Language, HighlightConfiguration> = {
+        let mut r = HashMap::new();
+        for lang in &[Language::Rust, Language::Javascript, Language::JavascriptJsx, Language::Typescript, Language::TypescriptTsx, Language::Python, Language::Cpp, Language::Java, Language::Php, Language::Go, Language::Scala, Language::Haskell, Language::Ruby,
+        ] {
     let mut config = {
         match lang {
             Language::Rust => {
@@ -173,7 +214,22 @@ pub fn highlight_to_html(
         }
     };
 
-    config.configure(&recognized_names);
+    config.configure(&HIGHLIGHT_NAMES);
+    r.insert(lang.clone(), config);
+        }
+        r
+
+    };
+}
+
+pub fn highlight_to_html(
+    lang: Language,
+    code: &str,
+    class_map: Option<&dyn Fn(&str) -> &str>,
+) -> String {
+    let mut highlighter = Highlighter::new();
+    let config = LANGUAGE_CONFIGS.get(&lang).unwrap();
+
 
     let mut result = String::new();
 
