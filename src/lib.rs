@@ -222,7 +222,7 @@ lazy_static::lazy_static! {
     };
 }
 
-pub fn highlight_to_html(lang: Language, code: &str, attr_map: &dyn Fn(&str) -> &str) -> String {
+pub fn highlight_to_html(lang: Language, code: &str, attr_map: &dyn Fn(&str) -> String) -> String {
     let mut highlighter = Highlighter::new();
     let config = LANGUAGE_CONFIGS.get(&lang).unwrap();
 
