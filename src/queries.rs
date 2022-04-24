@@ -12,7 +12,8 @@ pub static HIGHLIGHTS: phf::Map<&'static str, &'static str> = phf_map! {
     "python" => include_str!("../queries/python/highlights.scm"),
     "cpp" => include_str!("../queries/cpp/highlights.scm"),
     "c" => include_str!("../queries/c/highlights.scm"),
-    "java" => include_str!("../queries/java/highlights.scm"),
+    // "java" => include_str!("../queries/java/highlights.scm"),
+    "java" => include_str!("../languages/tree-sitter-java/queries/highlights.scm"),
     "go" => include_str!("../queries/go/highlights.scm"),
 };
 
