@@ -1,3 +1,6 @@
+use regex::Regex;
+use std::{collections::HashMap, sync::RwLock};
+
 use phf::phf_map;
 
 pub static HIGHLIGHTS: phf::Map<&'static str, &'static str> = phf_map! {
@@ -36,3 +39,39 @@ pub static LOCALS: phf::Map<&'static str, &'static str> = phf_map! {
     "java" => include_str!("../queries/java/locals.scm"),
     "go" => include_str!("../queries/go/locals.scm"),
 };
+
+lazy_static::lazy_static! {
+    static ref INHERITS_RE: Regex = Regex::new(r"^;+\s*inherits\s*:?\s*([a-z_,()]+)\s*$").unwrap();
+}
+
+// TODO: recursion detection
+pub fn get_query(map: &phf::Map<&'static str, &'static str>, lang: &str) -> Option<String> {
+    if let Some(s) = map.get(lang) {
+        let s = *s;
+        if let Some(first_line_pos) = s.find("\n") {
+            let first_line = &s[..first_line_pos];
+            if let Some(caps) = (&*INHERITS_RE).captures(first_line) {
+                if let Some(m) = caps.get(1) {
+                    let mut r = s.to_owned();
+                    for l in m.as_str().split(",") {
+                        if let Some(q) = get_query(map, l) {
+                            r.push_str(&q);
+                        } else {
+                            return None
+                        }
+                    }
+
+                    Some(r)
+                } else {
+                    Some(s.to_owned())
+                }
+            } else {
+                Some(s.to_owned())
+            }
+        } else {
+            Some(s.to_owned())
+        }
+    } else {
+        None
+    }
+}

@@ -114,9 +114,9 @@ pub static HIGHLIGHT_NAMES: &[&str] = &[
 lazy_static::lazy_static! {
   static ref RUST_CONFIG: HighlightConfiguration =  {
       let mut config = HighlightConfiguration::new(languages::rust(),
-                                queries::HIGHLIGHTS.get("rust").unwrap(),
-                                queries::INJECTIONS.get("rust").unwrap(),
-                                queries::LOCALS.get("rust").unwrap()).unwrap();
+                                &queries::get_query(&queries::HIGHLIGHTS, "rust").unwrap(),
+                                &queries::get_query(&queries::INJECTIONS, "rust").unwrap(),
+                                &queries::get_query(&queries::LOCALS, "rust").unwrap()).unwrap();
       config.configure(&HIGHLIGHT_NAMES);
       config
 
@@ -124,9 +124,9 @@ lazy_static::lazy_static! {
 
   static ref GO_CONFIG: HighlightConfiguration =  {
       let mut config = HighlightConfiguration::new(languages::go(),
-                                queries::HIGHLIGHTS.get("go").unwrap(),
-                                queries::INJECTIONS.get("go").unwrap(),
-                                queries::LOCALS.get("go").unwrap())
+                                &queries::get_query(&queries::HIGHLIGHTS, "go").unwrap(),
+                                &queries::get_query(&queries::INJECTIONS, "go").unwrap(),
+                                &queries::get_query(&queries::LOCALS, "go").unwrap())
 
         .unwrap();
       config.configure(&HIGHLIGHT_NAMES);
@@ -135,9 +135,9 @@ lazy_static::lazy_static! {
 
   static ref TS_CONFIG: HighlightConfiguration = {
       let mut config = HighlightConfiguration::new(languages::typescript(),
-                                queries::HIGHLIGHTS.get("typescript").unwrap(),
-                                queries::INJECTIONS.get("typescript").unwrap(),
-                                queries::LOCALS.get("typescript").unwrap())
+                                &queries::get_query(&queries::HIGHLIGHTS, "typescript").unwrap(),
+                                &queries::get_query(&queries::INJECTIONS, "typescript").unwrap(),
+                                &queries::get_query(&queries::LOCALS, "typescript").unwrap())
 
         .unwrap();
       config.configure(&HIGHLIGHT_NAMES);
@@ -146,9 +146,9 @@ lazy_static::lazy_static! {
 
   static ref TSX_CONFIG: HighlightConfiguration = {
       let mut config = HighlightConfiguration::new(languages::tsx(),
-                                queries::HIGHLIGHTS.get("tsx").unwrap(),
-                                queries::INJECTIONS.get("tsx").unwrap(),
-                                queries::LOCALS.get("tsx").unwrap())
+                                &queries::get_query(&queries::HIGHLIGHTS, "tsx").unwrap(),
+                                &queries::get_query(&queries::INJECTIONS, "tsx").unwrap(),
+                                &queries::get_query(&queries::LOCALS, "tsx").unwrap())
 
         .unwrap();
       config.configure(&HIGHLIGHT_NAMES);
@@ -158,9 +158,9 @@ lazy_static::lazy_static! {
 
   static ref JS_CONFIG: HighlightConfiguration = {
       let mut config = HighlightConfiguration::new(languages::javascript(),
-                                queries::HIGHLIGHTS.get("javascript").unwrap(),
-                                queries::INJECTIONS.get("javascript").unwrap(),
-                                queries::LOCALS.get("javascript").unwrap())
+                                &queries::get_query(&queries::HIGHLIGHTS, "javascript").unwrap(),
+                                &queries::get_query(&queries::INJECTIONS, "javascript").unwrap(),
+                                &queries::get_query(&queries::LOCALS, "javascript").unwrap())
 
         .unwrap();
       config.configure(&HIGHLIGHT_NAMES);
@@ -170,9 +170,9 @@ lazy_static::lazy_static! {
 
   static ref JSX_CONFIG: HighlightConfiguration = {
       let mut config = HighlightConfiguration::new(languages::javascript(),
-                                queries::HIGHLIGHTS.get("jsx").unwrap(),
-                                queries::INJECTIONS.get("javascript").unwrap(),
-                                queries::LOCALS.get("javascript").unwrap())
+                                &queries::get_query(&queries::HIGHLIGHTS, "jsx").unwrap(),
+                                &queries::get_query(&queries::INJECTIONS, "javascript").unwrap(),
+                                &queries::get_query(&queries::LOCALS, "javascript").unwrap())
 
         .unwrap();
       config.configure(&HIGHLIGHT_NAMES);
@@ -182,9 +182,9 @@ lazy_static::lazy_static! {
 
   static ref PYTHON_CONFIG: HighlightConfiguration = {
       let mut config = HighlightConfiguration::new(languages::python(),
-                                queries::HIGHLIGHTS.get("python").unwrap(),
-                                queries::INJECTIONS.get("python").unwrap(),
-                                queries::LOCALS.get("python").unwrap())
+                                &queries::get_query(&queries::HIGHLIGHTS, "python").unwrap(),
+                                &queries::get_query(&queries::INJECTIONS, "python").unwrap(),
+                                &queries::get_query(&queries::LOCALS, "python").unwrap())
 
         .unwrap();
       config.configure(&HIGHLIGHT_NAMES);
@@ -194,9 +194,9 @@ lazy_static::lazy_static! {
 
   static ref CPP_CONFIG: HighlightConfiguration = {
       let mut config = HighlightConfiguration::new(languages::cpp(),
-                                queries::HIGHLIGHTS.get("cpp").unwrap(),
-                                queries::INJECTIONS.get("cpp").unwrap(),
-                                queries::LOCALS.get("cpp").unwrap())
+                                &queries::get_query(&queries::HIGHLIGHTS, "cpp").unwrap(),
+                                &queries::get_query(&queries::INJECTIONS, "cpp").unwrap(),
+                                &queries::get_query(&queries::LOCALS, "cpp").unwrap())
 
         .unwrap();
       config.configure(&HIGHLIGHT_NAMES);
@@ -205,9 +205,9 @@ lazy_static::lazy_static! {
     };
   static ref JAVA_CONFIG: HighlightConfiguration = {
       let mut config = HighlightConfiguration::new(languages::java(),
-                                queries::HIGHLIGHTS.get("java").unwrap(),
-                                queries::INJECTIONS.get("java").unwrap(),
-                                queries::LOCALS.get("java").unwrap())
+                                &queries::get_query(&queries::HIGHLIGHTS, "java").unwrap(),
+                                &queries::get_query(&queries::INJECTIONS, "java").unwrap(),
+                                &queries::get_query(&queries::LOCALS, "java").unwrap())
 
         .unwrap();
       config.configure(&HIGHLIGHT_NAMES);
