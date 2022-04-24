@@ -30,35 +30,10 @@ use std::collections::HashMap;
 use tree_sitter_highlight::{HighlightConfiguration, HighlightEvent, Highlighter};
 use v_htmlescape::escape;
 
-pub mod cpp;
-pub mod go;
-pub mod haskell;
-pub mod java;
-pub mod javascript;
-pub mod php;
-pub mod python;
-pub mod ruby;
-pub mod rust;
-pub mod scala;
-pub mod typescript;
+pub mod languages;
+pub mod queries;
 
-/// The list of supported languages
-#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
-pub enum Language {
-    Rust,
-    Javascript,
-    JavascriptJsx,
-    Typescript,
-    TypescriptTsx,
-    Python,
-    Cpp,
-    Java,
-    Php,
-    Go,
-    Scala,
-    Haskell,
-    Ruby,
-}
+use languages::Language;
 
 /// The recognized highlight names, when parsing the code to HTML, the spans will have this name
 /// within the class attribute, with the dots replaced by `-`, for example `punctuation.delimiter`
@@ -137,94 +112,140 @@ pub static HIGHLIGHT_NAMES: &[&str] = &[
 ];
 
 lazy_static::lazy_static! {
-    static ref LANGUAGE_CONFIGS: HashMap<Language, HighlightConfiguration> = {
-        let mut r = HashMap::new();
-        for lang in &[Language::Rust, Language::Javascript, Language::JavascriptJsx, Language::Typescript, Language::TypescriptTsx, Language::Python, Language::Cpp, Language::Java, Language::Php, Language::Go, Language::Scala, Language::Haskell, Language::Ruby,
-        ] {
-    let mut config = {
-        match lang {
-            Language::Rust => {
-                HighlightConfiguration::new(rust::language(), rust::HIGHLIGHT_QUERY, "", "")
-                    .unwrap()
-            }
-            Language::Haskell => HighlightConfiguration::new(
-                haskell::language(),
-                haskell::HIGHLIGHT_QUERY,
-                "",
-                haskell::LOCALS_QUERY,
-            )
-            .unwrap(),
-            Language::Go => {
-                HighlightConfiguration::new(go::language(), go::HIGHLIGHT_QUERY, "", "").unwrap()
-            }
-            Language::Ruby => HighlightConfiguration::new(
-                ruby::language(),
-                ruby::HIGHLIGHT_QUERY,
-                "",
-                ruby::LOCALS_QUERY,
-            )
-            .unwrap(),
-            Language::Scala => HighlightConfiguration::new(scala::language(), "", "", "").unwrap(),
-            Language::Php => HighlightConfiguration::new(
-                php::language(),
-                php::HIGHLIGHTS_QUERY,
-                php::INJECTIONS_QUERY,
-                "",
-            )
-            .unwrap(),
-            Language::Typescript => HighlightConfiguration::new(
-                typescript::language_typescript(),
-                typescript::HIGHLIGHT_QUERY,
-                "",
-                typescript::LOCALS_QUERY,
-            )
-            .unwrap(),
-            Language::TypescriptTsx => HighlightConfiguration::new(
-                typescript::language_tsx(),
-                typescript::HIGHLIGHT_QUERY,
-                "",
-                typescript::LOCALS_QUERY,
-            )
-            .unwrap(),
-            Language::Javascript => HighlightConfiguration::new(
-                javascript::language(),
-                javascript::HIGHLIGHT_QUERY,
-                javascript::INJECTION_QUERY,
-                "",
-            )
-            .unwrap(),
-            Language::JavascriptJsx => HighlightConfiguration::new(
-                javascript::language(),
-                javascript::JSX_HIGHLIGHT_QUERY,
-                javascript::INJECTION_QUERY,
-                "",
-            )
-            .unwrap(),
-            Language::Python => {
-                HighlightConfiguration::new(python::language(), python::HIGHLIGHT_QUERY, "", "")
-                    .unwrap()
-            }
-            Language::Cpp => {
-                HighlightConfiguration::new(cpp::language(), cpp::HIGHLIGHT_QUERY, "", "").unwrap()
-            }
-            Language::Java => {
-                HighlightConfiguration::new(java::language(), java::HIGHLIGHT_QUERY, "", "")
-                    .unwrap()
-            }
-        }
-    };
+  static ref RUST_CONFIG: HighlightConfiguration =  {
+      let mut config = HighlightConfiguration::new(languages::rust(),
+                                queries::HIGHLIGHTS.get("rust").unwrap(),
+                                queries::INJECTIONS.get("rust").unwrap(),
+                                queries::LOCALS.get("rust").unwrap()).unwrap();
+      config.configure(&HIGHLIGHT_NAMES);
+      config
 
-    config.configure(&HIGHLIGHT_NAMES);
-    r.insert(lang.clone(), config);
-        }
-        r
+  };
+
+  static ref GO_CONFIG: HighlightConfiguration =  {
+      let mut config = HighlightConfiguration::new(languages::go(),
+                                queries::HIGHLIGHTS.get("go").unwrap(),
+                                queries::INJECTIONS.get("go").unwrap(),
+                                queries::LOCALS.get("go").unwrap())
+
+        .unwrap();
+      config.configure(&HIGHLIGHT_NAMES);
+      config
+  };
+
+  static ref TS_CONFIG: HighlightConfiguration = {
+      let mut config = HighlightConfiguration::new(languages::typescript(),
+                                queries::HIGHLIGHTS.get("typescript").unwrap(),
+                                queries::INJECTIONS.get("typescript").unwrap(),
+                                queries::LOCALS.get("typescript").unwrap())
+
+        .unwrap();
+      config.configure(&HIGHLIGHT_NAMES);
+      config
+  };
+
+  static ref TSX_CONFIG: HighlightConfiguration = {
+      let mut config = HighlightConfiguration::new(languages::tsx(),
+                                queries::HIGHLIGHTS.get("tsx").unwrap(),
+                                queries::INJECTIONS.get("tsx").unwrap(),
+                                queries::LOCALS.get("tsx").unwrap())
+
+        .unwrap();
+      config.configure(&HIGHLIGHT_NAMES);
+      config
 
     };
+
+  static ref JS_CONFIG: HighlightConfiguration = {
+      let mut config = HighlightConfiguration::new(languages::javascript(),
+                                queries::HIGHLIGHTS.get("javascript").unwrap(),
+                                queries::INJECTIONS.get("javascript").unwrap(),
+                                queries::LOCALS.get("javascript").unwrap())
+
+        .unwrap();
+      config.configure(&HIGHLIGHT_NAMES);
+      config
+
+    };
+
+  static ref JSX_CONFIG: HighlightConfiguration = {
+      let mut config = HighlightConfiguration::new(languages::javascript(),
+                                queries::HIGHLIGHTS.get("jsx").unwrap(),
+                                queries::INJECTIONS.get("javascript").unwrap(),
+                                queries::LOCALS.get("javascript").unwrap())
+
+        .unwrap();
+      config.configure(&HIGHLIGHT_NAMES);
+      config
+
+    };
+
+  static ref PYTHON_CONFIG: HighlightConfiguration = {
+      let mut config = HighlightConfiguration::new(languages::python(),
+                                queries::HIGHLIGHTS.get("python").unwrap(),
+                                queries::INJECTIONS.get("python").unwrap(),
+                                queries::LOCALS.get("python").unwrap())
+
+        .unwrap();
+      config.configure(&HIGHLIGHT_NAMES);
+      config
+
+    };
+
+  static ref CPP_CONFIG: HighlightConfiguration = {
+      let mut config = HighlightConfiguration::new(languages::cpp(),
+                                queries::HIGHLIGHTS.get("cpp").unwrap(),
+                                queries::INJECTIONS.get("cpp").unwrap(),
+                                queries::LOCALS.get("cpp").unwrap())
+
+        .unwrap();
+      config.configure(&HIGHLIGHT_NAMES);
+      config
+
+    };
+  static ref JAVA_CONFIG: HighlightConfiguration = {
+      let mut config = HighlightConfiguration::new(languages::java(),
+                                queries::HIGHLIGHTS.get("java").unwrap(),
+                                queries::INJECTIONS.get("java").unwrap(),
+                                queries::LOCALS.get("java").unwrap())
+
+        .unwrap();
+      config.configure(&HIGHLIGHT_NAMES);
+      config
+
+    };
+
 }
 
-pub fn highlight_to_html(lang: Language, code: &str, attr_map: &dyn Fn(&str) -> String) -> String {
+fn load_language<'a>(language: &Language) -> &'a HighlightConfiguration {
+    match language {
+        Language::Rust => &*RUST_CONFIG,
+        Language::Javascript => &*JS_CONFIG,
+        Language::JavascriptJsx => &*JSX_CONFIG,
+        Language::Typescript => &*TS_CONFIG,
+        Language::TypescriptTsx => &*TSX_CONFIG,
+        Language::Python => &*PYTHON_CONFIG,
+        Language::Cpp => &*CPP_CONFIG,
+        Language::Java => &*JAVA_CONFIG,
+        Language::Go => &*GO_CONFIG,
+    }
+}
+
+pub fn highlight_to_html_with_str_language(
+    lang: &str,
+    code: &str,
+    attr_map: &dyn Fn(&str) -> String,
+) -> Option<String> {
+    if let Some(l) = languages::LANGUAGES.get(lang) {
+        // println!("For {lang}");
+        Some(highlight_to_html(l, code, attr_map))
+    } else {
+        None
+    }
+}
+pub fn highlight_to_html(lang: &Language, code: &str, attr_map: &dyn Fn(&str) -> String) -> String {
     let mut highlighter = Highlighter::new();
-    let config = LANGUAGE_CONFIGS.get(&lang).unwrap();
+    let config = load_language(&lang);
 
     let mut result = String::new();
 
