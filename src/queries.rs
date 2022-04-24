@@ -4,17 +4,17 @@ use std::{collections::HashMap, sync::RwLock};
 use phf::phf_map;
 
 pub static HIGHLIGHTS: phf::Map<&'static str, &'static str> = phf_map! {
-    "rust" => include_str!("../queries/rust/highlights.scm"),
-    "javascript" => include_str!("../queries/javascript/highlights.scm"),
+    "rust" => include_str!("../languages/tree-sitter-rust/queries/highlights.scm"),
+    "javascript" => include_str!("../languages/tree-sitter-javascript/queries/highlights.scm"),
     "jsx" => include_str!("../queries/jsx/highlights.scm"),
-    "typescript" => include_str!("../queries/typescript/highlights.scm"),
+    "typescript" => include_str!("../languages/tree-sitter-typescript/queries/highlights.scm"),
     "tsx" => include_str!("../queries/tsx/highlights.scm"),
     "python" => include_str!("../queries/python/highlights.scm"),
     "cpp" => include_str!("../queries/cpp/highlights.scm"),
     "c" => include_str!("../queries/c/highlights.scm"),
     // "java" => include_str!("../queries/java/highlights.scm"),
     "java" => include_str!("../languages/tree-sitter-java/queries/highlights.scm"),
-    "go" => include_str!("../queries/go/highlights.scm"),
+    "go" => include_str!("../languages/tree-sitter-go/queries/highlights.scm")
 };
 
 pub static INJECTIONS: phf::Map<&'static str, &'static str> = phf_map! {
