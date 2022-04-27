@@ -8,7 +8,7 @@ pub static HIGHLIGHTS: phf::Map<&'static str, &'static str> = phf_map! {
     "jsx" => include_str!("../queries/jsx/highlights.scm"),
     "typescript" => include_str!("../languages/tree-sitter-typescript/queries/highlights.scm"),
     "tsx" => include_str!("../queries/tsx/highlights.scm"),
-    "python" => include_str!("../queries/python/highlights.scm"),
+    "python" => include_str!("../languages/tree-sitter-python/queries/highlights.scm"),
     "cpp" => include_str!("../queries/cpp/highlights.scm"),
     "c" => include_str!("../queries/c/highlights.scm"),
     // "java" => include_str!("../queries/java/highlights.scm"),
@@ -57,7 +57,7 @@ pub fn get_query(map: &phf::Map<&'static str, &'static str>, lang: &str) -> Opti
                         if let Some(q) = get_query(map, l) {
                             r.push_str(&q);
                         } else {
-                            return None
+                            return None;
                         }
                     }
 
