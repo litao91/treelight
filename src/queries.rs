@@ -1,5 +1,4 @@
 use regex::Regex;
-use std::{collections::HashMap, sync::RwLock};
 
 use phf::phf_map;
 

@@ -25,7 +25,6 @@
 //! println!("{}", result);
 //! ```
 
-use std::collections::HashMap;
 
 use tree_sitter_highlight::{HighlightConfiguration, HighlightEvent, Highlighter};
 use v_htmlescape::escape;

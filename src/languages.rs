@@ -81,3 +81,7 @@ pub static LANGUAGES: phf::Map<&'static str, Language> = phf_map! {
     "java" => Language::Java,
     "go" => Language::Go,
 };
+
+pub fn get_language_from_name(name: &str) -> Option<&Language> {
+    LANGUAGES.get(name)
+}
